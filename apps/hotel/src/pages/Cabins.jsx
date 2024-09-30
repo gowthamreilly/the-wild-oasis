@@ -7,12 +7,12 @@ import CabinTableOperations from "../features/cabins/CabinTableOperations";
 function Cabins() {
   return (
     <>
-      <Row type="horizontal">
+      <Row type="horizontal" aria-label="cabin-header">
         <Heading as="h1">All cabins</Heading>
         <CabinTableOperations />
       </Row>
 
-      <Row>
+      <Row aria-label="cabin-data">
         <CabinTable />
         <AddCabin />
       </Row>
