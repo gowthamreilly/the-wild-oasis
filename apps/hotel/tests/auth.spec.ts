@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, request, test } from "@playwright/test";
 import path from "path";
 
 // 1. Test plan
@@ -8,6 +8,13 @@ import path from "path";
 // 4. when logged in, user should be able to see the dashboard
 
 test("logging in with the wrong credentials", async ({ page }) => {
+  test.use({
+    storageState: {
+      cookies: [],
+      origins: [],
+    },
+  });
+
   await page.goto("http://localhost:5173/login");
 
   await page.getByLabel("Email address").fill("akjnvr@kevrab.cer");
@@ -35,6 +42,13 @@ test("logging in with the wrong credentials", async ({ page }) => {
 });
 
 test.beforeEach("logging in with the right credentials", async ({ page }) => {
+  test.use({
+    storageState: {
+      cookies: [],
+      origins: [],
+    },
+  });
+
   await page.goto("http://localhost:5173/login");
 
   await page.getByLabel("Email address").fill("gowtham@gowthamreilly.com");
@@ -120,6 +134,9 @@ test("Update user Account", async ({ page }) => {
 });
 
 test("Create Cabin", async ({ page }) => {
+  // await page.waitForResponse(async (Response) => {
+  //   const includesCabin = Response.url().includes('/Cabin');
+  // })
   const navContainer = page.locator("nav");
 
   const cabinlink = navContainer.getByRole("listitem").filter({
@@ -190,4 +207,13 @@ test("Check sorting and filtering", async ({ page }) => {
     .getByText("No Discount");
 
   await noDiscountFilter.click();
+});
+
+// test.beforeEach -> token validation etc.
+test.afterEach("Delete Cabin", async ({ page }) => {
+  const storageState = page.context().storageState();
+
+  // if(!cabinId){
+  //   await request =
+  // }
 });
