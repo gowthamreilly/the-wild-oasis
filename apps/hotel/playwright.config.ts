@@ -1,22 +1,26 @@
 import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
+import path from "path";
 
-const BASE_APP_URL = "";
+dotenv.config({
+  path: path.resolve(".env"),
+});
 
 export default defineConfig({
   testDir: "tests",
   projects: [
     {
-      name: "setup",
-      testMatch: "tests/auth.setup.ts",
-    },
-    {
-      name: "desktop",
+      name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
         storageState: "auth.json",
-        baseURL: "<BASE_APP_URL>",
+        baseURL: process.env.APP_URL,
       },
       dependencies: ["setup"],
+    },
+    {
+      name: "setup",
+      testMatch: "tests/auth.setup.ts",
     },
   ],
 });
