@@ -17,14 +17,18 @@ function HeaderMenu() {
     <StyledHeaderMenu>
       <li>
         <ButtonIcon onClick={() => navigate("/account")}>
-          <HiOutlineUser />
+          <HiOutlineUser aria-label="user"/>
         </ButtonIcon>
       </li>
       <li>
+        <div aria-label="layoutMode">
         <DarkModeToggle />
+        </div>
       </li>
       <li>
+        <div aria-label="Log_out">
         <Logout />
+        </div>
       </li>
     </StyledHeaderMenu>
   );
