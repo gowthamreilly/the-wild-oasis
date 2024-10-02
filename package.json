@@ -17,5 +17,8 @@
   "packageManager": "npm@10.8.2",
   "workspaces": [
     "apps/*"
-  ]
+  ],
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
 }
