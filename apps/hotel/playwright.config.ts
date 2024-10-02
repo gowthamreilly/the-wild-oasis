@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import path from "path";
 
 dotenv.config({
-  path: path.resolve(".env"),
+  path: path.resolve(".env.local"),
 });
 
 export default defineConfig({

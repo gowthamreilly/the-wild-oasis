@@ -1,4 +1,4 @@
-import { expect, request, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import path from "path";
 
 const LOGIN_URL = `/login`;

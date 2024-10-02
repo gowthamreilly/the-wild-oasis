@@ -145,6 +145,9 @@ test("create a cabin", async ({ page }) => {
   await expect(newlyCreatedCabinNameLocator).toBeVisible();
 });
 
+test("edit cabin", async ({ page }) => {
+  await page.goto("/");
+});
 test("delete a cabin", async ({ page }) => {
   const cabinName = generateUniqueCabinName();
 
@@ -169,3 +172,5 @@ test.afterEach(async () => {
     await apiClient.deleteCabinById(cabinId);
   }
 });
+
+test("Create Cabin via graphQL", async ({ page }) => {});
