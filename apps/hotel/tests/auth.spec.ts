@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import path from "path";
+// import path from "path";
 // 1. Test plan
 // 1. login page should be displayed when not logged in
 // 2. user should be able to login

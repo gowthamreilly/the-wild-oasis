@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import path from "path";
+import { apiClient } from "./services/api";
 
 test("create and delete new cabin", async ({ page }) => {
   const DASHBOARD_URL = `/dashboard`;
@@ -123,4 +124,27 @@ test("create and delete new cabin", async ({ page }) => {
     page.getByRole("status").filter({ hasText: "cabin successfully deleted" })
   ).toBeVisible();
   await expect(cabinsList.getByText(cabinName)).not.toBeVisible();
+});
+
+test("Edit cabin", async ({ page }) => {
+  // create a cabin using api before editing it
+  const resStatus = await apiClient.createCabin({
+    name: "Cabin" + Date.now(),
+    maxCapacity: 5,
+    regularPrice: 1000,
+    discount: 2,
+    description: "desc",
+    image:
+      "https://umxjivfxuijjbopalczq.supabase.co/storage/v1/object/public/cabin-images/0.20838883813617337-indian-harry.jpg",
+  });
+  expect(resStatus.status()).toBe(201);
+
+  const newlyCreatedCabin = await resStatus.json();
+
+  // try to edit cabin.
+
+  //delete cabin after editing it using api
+  if (newlyCreatedCabin[0].id) {
+    await apiClient.deleteCabin(newlyCreatedCabin[0].id);
+  }
 });

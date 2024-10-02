@@ -1,4 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
+import path from "path";
+
+dotenv.config({
+  path: path.resolve(".env"),
+});
 
 export default defineConfig({
   projects: [
@@ -8,7 +14,7 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         storageState: "auth.json",
-        baseURL: "http://localhost:5173",
+        baseURL: process.env.APP_URL,
       },
       dependencies: ["setup"],
     },
