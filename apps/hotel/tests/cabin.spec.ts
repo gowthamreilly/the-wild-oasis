@@ -1,65 +1,24 @@
 import { expect, test } from "@playwright/test";
 import path from "path";
-
-const APP_URL = "http://localhost:5173";
-const LOGIN_URL = `${APP_URL}/login`;
-const DASHBOARD_URL = `${APP_URL}/dashboard`;
-
-const LOGIN_EMAIL = "gowtham@gowthamreilly.com";
-const LOGIN_PASSWORD = "Revolution@24";
+import { graphqlApiClient } from "./services/graphqlApiClient";
 
 const CUSTOMER_APP_URL = "http://localhost:3000/";
 const CUSTOMER_CABINS_URL = `${CUSTOMER_APP_URL}cabins`;
+const SAMPLE_IMAGE_LINK =
+  "https://umxjivfxuijjbopalczq.supabase.co/storage/v1/object/public/cabin-images/0.8074113787073192-wallpaperflare.com_wallpaper.jpg";
 
 const generateUniqueCabinName = () => {
-  return `Cabin ${Date.now()}`;
+  return `Self Destruct ${Date.now()}`;
 };
 
-test.beforeEach(async ({ page }) => {
-  await page.goto(APP_URL);
+let cabinId = undefined;
 
-  await page.waitForURL(LOGIN_URL);
-
-  expect(page.url()).toBe(LOGIN_URL);
-
-  const loginPageTitle = page.getByText("Log in to your account");
-
-  await expect(loginPageTitle).toBeVisible();
-
-  const emailAddressInputLocator = page.getByLabel("Email address");
-  const passwordInputLocator = page.getByLabel("Password");
-
-  await expect(emailAddressInputLocator).toBeVisible();
-  await expect(passwordInputLocator).toBeVisible();
-
-  await emailAddressInputLocator.fill(LOGIN_EMAIL);
-
-  await passwordInputLocator.fill(LOGIN_PASSWORD);
-
-  await expect(emailAddressInputLocator).toHaveValue(LOGIN_EMAIL);
-  await expect(passwordInputLocator).toHaveValue(LOGIN_PASSWORD);
-
-  await expect(passwordInputLocator).toHaveAttribute("type", "password");
-
-  const loginButtonLocator = page.getByRole("button", { name: "Log in" });
-
-  await expect(loginButtonLocator).toBeVisible();
-
-  await loginButtonLocator.click();
-
-  await page.waitForURL(DASHBOARD_URL);
-
-  expect(page.url()).toBe(DASHBOARD_URL);
-
-  const pageTitle = page
-    .getByRole("heading", { name: "Dashboard" })
-    .and(page.getByText("Dashboard"))
-    .and(page.locator("h1"));
-
-  await expect(pageTitle).toBeVisible();
+test.beforeEach(async () => {
+  cabinId = undefined;
 });
 
 test("create a cabin", async ({ page }) => {
+  await page.goto("/");
   const cabinsNavMenuItemLink = page.getByRole("link", { name: "Cabins" });
 
   await expect(cabinsNavMenuItemLink).toBeVisible();
@@ -127,11 +86,25 @@ test("create a cabin", async ({ page }) => {
 
   await addNewCabinFormSubmitButtonLocator.click();
 
+  const res = await page.waitForResponse(async (response) => {
+    const includesCabin = response.url().includes("/cabins");
+
+    if (!includesCabin) return false;
+
+    return response.status() === 201;
+  });
+
+  const data = await res.json();
+
+  cabinId = data.id;
+
   const addNewCabinCreationSuccessMessageLocator = page.getByText(
     "New cabin successfully created"
   );
 
-  await expect(addNewCabinCreationSuccessMessageLocator).toBeVisible();
+  await expect(addNewCabinCreationSuccessMessageLocator).toBeVisible({
+    timeout: 30000,
+  });
 
   await expect(addNewCabinFormLocator).not.toBeVisible();
 
@@ -163,6 +136,8 @@ test("create a cabin", async ({ page }) => {
 
   expect(page.url()).toBe(CUSTOMER_CABINS_URL);
 
+  await page.reload();
+
   const customerCabinsPageTitle = page.getByRole("heading", {
     name: "Our Luxury Cabins",
   });
@@ -172,4 +147,99 @@ test("create a cabin", async ({ page }) => {
   await page.reload();
 
   await expect(newlyCreatedCabinNameLocator).toBeVisible();
+});
+
+test("delete a cabin", async ({ page }) => {
+  const cabinName = generateUniqueCabinName();
+
+  const res = await graphqlApiClient.createCabin({
+    name: cabinName,
+    maxCapacity: 4,
+    regularPrice: 200,
+    discount: 20,
+    description: "A cozy cabin in the woods",
+    image: SAMPLE_IMAGE_LINK,
+  });
+
+  expect(res.status()).toBe(200);
+
+  const data = await res.json();
+
+  cabinId = data?.data?.insertIntocabinsCollection?.records?.[0]?.id;
+
+  console.log("cabinId", cabinId);
+
+  await page.goto("/");
+
+  const cabinsNavMenuItemLink = page.getByRole("link", { name: "Cabins" });
+
+  await expect(cabinsNavMenuItemLink).toBeVisible();
+
+  await cabinsNavMenuItemLink.click();
+
+  const cabinsPageTitle = page.getByRole("heading", { name: "All cabins" });
+
+  await expect(cabinsPageTitle).toBeVisible();
+
+  const cabinRowLocator = page.getByRole("row", { name: cabinName });
+
+  await expect(cabinRowLocator).toBeVisible();
+
+  const moreActionsButtonLocator = cabinRowLocator.locator("button");
+
+  await expect(moreActionsButtonLocator).toBeVisible();
+
+  await moreActionsButtonLocator.click();
+
+  const deleteCabinButtonLocator = page.getByRole("button", {
+    name: "Delete",
+  });
+
+  await expect(deleteCabinButtonLocator).toBeVisible();
+
+  await deleteCabinButtonLocator.click({
+    force: true,
+  });
+
+  const confirmationModalLocator = page.getByRole("dialog");
+
+  await expect(confirmationModalLocator).toBeVisible();
+
+  const confirmationModalTitleLocator = page.getByRole("heading", {
+    name: "Delete cabin",
+  });
+
+  await expect(confirmationModalTitleLocator).toBeVisible();
+
+  const confirmationModalMessageLocator = page.getByText(
+    "Are you sure you want to delete this cabins permanently? This action cannot be undone."
+  );
+
+  await expect(confirmationModalMessageLocator).toBeVisible();
+
+  const confirmDeleteCabinButtonLocator = page.getByRole("button", {
+    name: "Delete",
+  });
+
+  await expect(confirmDeleteCabinButtonLocator).toBeVisible();
+
+  await confirmDeleteCabinButtonLocator.click();
+
+  const deleteCabinSuccessMessageLocator = page.getByText(
+    "Cabin successfully deleted"
+  );
+
+  await expect(deleteCabinSuccessMessageLocator).toBeVisible({
+    timeout: 30000,
+  });
+
+  await expect(cabinRowLocator).not.toBeVisible();
+
+  cabinId = undefined;
+});
+
+test.afterEach(async () => {
+  if (cabinId) {
+    await graphqlApiClient.deleteCabinById(cabinId);
+  }
 });

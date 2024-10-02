@@ -82,7 +82,7 @@ function Window({ children, name }) {
 
   return createPortal(
     <Overlay>
-      <StyledModal ref={ref}>
+      <StyledModal ref={ref} data-testid="modal" role="dialog">
         <Button onClick={close}>
           <HiXMark />
         </Button>
