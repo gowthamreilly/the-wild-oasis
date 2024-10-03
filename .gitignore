@@ -39,4 +39,5 @@ yarn-error.log*
 
 # Playwright
 test-results/
+playwright-report/
 auth.json

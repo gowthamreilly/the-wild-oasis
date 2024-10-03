@@ -4,8 +4,9 @@ import { createGraphiQLFetcher } from "@graphiql/toolkit";
 import { GraphiQL } from "graphiql";
 import "graphiql/graphiql.css";
 
-const BASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-const API_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+const BASE_URL = "https://umxjivfxuijjbopalczq.supabase.co";
+const API_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVteGppdmZ4dWlqamJvcGFsY3pxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjc2MTkwNjcsImV4cCI6MjA0MzE5NTA2N30.xkSumSn6BrBn9yjN3Jj0a67eqlhM766fhCf56zdwrk4";
 
 const URL = `${BASE_URL}/graphql/v1`;
 

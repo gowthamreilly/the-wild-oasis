@@ -1,10 +1,16 @@
 import { test as setup } from "@playwright/test";
 import { writeFile } from "fs/promises";
+import {
+  APP_URL,
+  SUPABASE_PROJECT_ID,
+  VITE_SUPABASE_ANON_KEY,
+  VITE_SUPABASE_URL,
+} from "./constants";
 
 const LOGIN_EMAIL = "gowtham@gowthamreilly.com";
 const LOGIN_PASSWORD = "Revolution@24";
 
-const API_URL = process.env.VITE_SUPABASE_URL!;
+const API_URL = VITE_SUPABASE_URL;
 
 const authFilePath = "auth.json";
 
@@ -17,7 +23,7 @@ setup("login", async ({ request }) => {
         password: LOGIN_PASSWORD,
       },
       headers: {
-        apikey: process.env.VITE_SUPABASE_ANON_KEY!,
+        apikey: VITE_SUPABASE_ANON_KEY,
       },
     }
   );
@@ -28,10 +34,10 @@ setup("login", async ({ request }) => {
     cookies: [],
     origins: [
       {
-        origin: process.env.APP_URL,
+        origin: APP_URL,
         localStorage: [
           {
-            name: `sb-${process.env.SUPABASE_PROJECT_ID}-auth-token`,
+            name: `sb-${SUPABASE_PROJECT_ID}-auth-token`,
             value: JSON.stringify(data),
           },
         ],

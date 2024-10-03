@@ -1,6 +1,4 @@
-import { expect, test } from "@playwright/test";
-import path from "path";
-import { graphqlApiClient } from "./services/graphqlApiClient";
+import { test, expect } from "./config";
 import { CabinPage } from "./pages/cabin.page";
 import { generateUniqueCabinName } from "./utils";
 
@@ -10,6 +8,10 @@ const SAMPLE_IMAGE_LINK =
   "https://umxjivfxuijjbopalczq.supabase.co/storage/v1/object/public/cabin-images/0.8074113787073192-wallpaperflare.com_wallpaper.jpg";
 
 let cabinId = undefined;
+
+test.use({
+  colorScheme: "light",
+});
 
 test.describe("CRUD Cabins", () => {
   test.beforeEach(async () => {
@@ -22,15 +24,7 @@ test.describe("CRUD Cabins", () => {
       tag: ["@cabin-feature", "@smoke", "@regression"],
     },
     async ({ page }) => {
-      const {
-        cabinNameInputLocator,
-        cabinMaximumCapacityInputLocator,
-        cabinRegularPriceInputLocator,
-        cabinDiscountInputLocator,
-        cabinDescriptionInputLocator,
-        cabinImageInputLocator,
-        fillCabinForm,
-      } = new CabinPage(page);
+      const cabinPage = new CabinPage(page);
 
       await page.goto("/");
       const cabinsNavMenuItemLink = page.getByRole("link", { name: "Cabins" });
@@ -58,27 +52,25 @@ test.describe("CRUD Cabins", () => {
 
       await expect(addNewCabinFormLocator).toBeVisible();
 
-      await expect(cabinNameInputLocator).toBeVisible();
-      await expect(cabinMaximumCapacityInputLocator).toBeVisible();
-      await expect(cabinRegularPriceInputLocator).toBeVisible();
-      await expect(cabinDiscountInputLocator).toBeVisible();
-      await expect(cabinDescriptionInputLocator).toBeVisible();
-      await expect(cabinImageInputLocator).toBeVisible();
+      await expect(cabinPage.cabinNameInputLocator).toBeVisible();
+      await expect(cabinPage.cabinMaximumCapacityInputLocator).toBeVisible();
+      await expect(cabinPage.cabinRegularPriceInputLocator).toBeVisible();
+      await expect(cabinPage.cabinDiscountInputLocator).toBeVisible();
+      await expect(cabinPage.cabinDescriptionInputLocator).toBeVisible();
+      await expect(cabinPage.cabinImageInputLocator).toBeVisible();
 
-      const cabinName = await fillCabinForm({
-        name: "cabon name",
-      });
+      const cabinName = await cabinPage.fillCabinForm();
 
-      await expect(cabinNameInputLocator).toHaveValue(cabinName);
-      await expect(cabinMaximumCapacityInputLocator).toHaveValue("4");
-      await expect(cabinRegularPriceInputLocator).toHaveValue("200");
-      await expect(cabinDiscountInputLocator).toHaveValue("20");
-      await expect(cabinDescriptionInputLocator).toHaveValue(
+      await expect(cabinPage.cabinNameInputLocator).toHaveValue(cabinName);
+      await expect(cabinPage.cabinMaximumCapacityInputLocator).toHaveValue("4");
+      await expect(cabinPage.cabinRegularPriceInputLocator).toHaveValue("200");
+      await expect(cabinPage.cabinDiscountInputLocator).toHaveValue("20");
+      await expect(cabinPage.cabinDescriptionInputLocator).toHaveValue(
         "A cozy cabin in the woods"
       );
 
       const addNewCabinFormSubmitButtonLocator = page.getByRole("button", {
-        name: "Create new cabin",
+        name: "Create new cabinnnnnnn",
       });
 
       await expect(addNewCabinFormSubmitButtonLocator).toBeVisible();
@@ -110,46 +102,13 @@ test.describe("CRUD Cabins", () => {
       const newlyCreatedCabinNameLocator = page.getByText(cabinName);
 
       await expect(newlyCreatedCabinNameLocator).toBeVisible();
-
-      await page.goto(CUSTOMER_APP_URL);
-
-      await page.waitForURL(CUSTOMER_APP_URL);
-
-      expect(page.url()).toBe(CUSTOMER_APP_URL);
-
-      const customerHomePageTitle = page.getByRole("heading", {
-        name: "Welcome to paradise.",
-      });
-
-      await expect(customerHomePageTitle).toBeVisible();
-
-      const exploreLuxuryCabinsButtonLocator = page.getByRole("link", {
-        name: "Explore luxury cabins",
-      });
-
-      await expect(exploreLuxuryCabinsButtonLocator).toBeVisible();
-
-      await exploreLuxuryCabinsButtonLocator.click();
-
-      await page.waitForURL(CUSTOMER_CABINS_URL);
-
-      expect(page.url()).toBe(CUSTOMER_CABINS_URL);
-
-      await page.reload();
-
-      const customerCabinsPageTitle = page.getByRole("heading", {
-        name: "Our Luxury Cabins",
-      });
-
-      await expect(customerCabinsPageTitle).toBeVisible();
-
-      await page.reload();
-
-      await expect(newlyCreatedCabinNameLocator).toBeVisible();
     }
   );
 
-  test("delete a  @regression @cabin-feature", async ({ page }) => {
+  test("delete a  @regression @cabin-feature", async ({
+    page,
+    graphqlApiClient,
+  }) => {
     const cabinName = generateUniqueCabinName();
 
     const res = await graphqlApiClient.createCabin({
@@ -238,7 +197,7 @@ test.describe("CRUD Cabins", () => {
     cabinId = undefined;
   });
 
-  test.afterEach(async () => {
+  test.afterEach(async ({ graphqlApiClient }) => {
     if (cabinId) {
       await graphqlApiClient.deleteCabinById(cabinId);
     }

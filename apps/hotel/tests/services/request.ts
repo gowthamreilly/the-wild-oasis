@@ -1,10 +1,11 @@
 import { request as base } from "@playwright/test";
+import { VITE_SUPABASE_ANON_KEY, VITE_SUPABASE_URL } from "../constants";
 
 const accessToken = process.env.ACCESS_TOKEN!;
 
-const API_KEY = process.env.VITE_SUPABASE_ANON_KEY!;
+const API_KEY = VITE_SUPABASE_ANON_KEY;
 
-const API_URL = process.env.VITE_SUPABASE_URL!;
+const API_URL = VITE_SUPABASE_URL;
 
 const request = await base.newContext({
   baseURL: API_URL,
