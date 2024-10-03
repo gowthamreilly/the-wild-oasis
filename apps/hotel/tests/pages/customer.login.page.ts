@@ -20,7 +20,7 @@ export class CustomerLoginPage {
         // this.emailLocator = emailDiv.locator('input');
         const passswordlDiv= formDiv.filter({ hasText: /^Password$/ });
         this.passwordLocator = passswordlDiv.locator('input');
-        this.loginBtn=page.getByRole('button',{name : 'Sign in'});
+        this.loginBtn=page.getByRole('button',{name : 'Sign i'});
 
     }
 }
