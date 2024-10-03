@@ -14,7 +14,7 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         storageState: "auth.json",
-        baseURL: 'http://localhost:5173',
+        baseURL: process.env.APP_URL,
       },
       dependencies: ["setup"],
     },
