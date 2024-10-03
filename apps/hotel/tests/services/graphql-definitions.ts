@@ -12,7 +12,7 @@ mutation insertIntocabinsCollection($cabins: [cabinsInsertInput!]!) {
     affectedCount
     records {
       id
-      name
+      namex
     }
   }
 }
