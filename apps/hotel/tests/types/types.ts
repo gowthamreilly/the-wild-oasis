@@ -6,3 +6,7 @@ export type CreateCabinPayload = {
   description: string;
   image: string;
 };
+
+export type CabinEntity = CreateCabinPayload & {
+  id: number;
+};
