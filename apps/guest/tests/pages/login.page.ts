@@ -21,6 +21,5 @@ export class CustomerLoginPage {
         const passswordlDiv= formDiv.filter({ hasText: /^Password$/ });
         this.passwordLocator = passswordlDiv.locator('input');
         this.loginBtn=page.getByRole('button',{name : 'Sign i'});
-
     }
 }

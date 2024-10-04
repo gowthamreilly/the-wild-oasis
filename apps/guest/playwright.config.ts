@@ -1,4 +1,4 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 
 const PLAYWRIGHT_ENV = process.env.PLAYWRIGHT_ENV;
 const isDevelopment = PLAYWRIGHT_ENV === "development";

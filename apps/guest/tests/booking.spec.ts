@@ -11,7 +11,7 @@
 //11. Check for all three status Unconfermed , Checked In and Checked Out 
 
 import test, { expect } from "@playwright/test";
-import { CustomerLoginPage } from "./pages/customer.login.page";
+import { CustomerLoginPage } from "./pages/login.page";
 
 const CUSTOMER_APP_URL = "http://localhost:3000/";
 const CUSTOMER_DASHBOARD_URL = `${CUSTOMER_APP_URL}account`;

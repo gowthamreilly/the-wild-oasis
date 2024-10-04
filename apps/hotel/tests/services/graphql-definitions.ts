@@ -18,9 +18,21 @@ mutation insertIntocabinsCollection($cabins: [cabinsInsertInput!]!) {
 }
 `;
 
+const updateIntocabinsCollectionMutationDefinition = `mutation updatecabinsCollection($cabins: [cabinsUpdateInput]! ,$booking: [bookingsFilter], $atmost: Int!){
+  updatecabinsCollection(set: $cabins ,filter: $booking, atMost: $atmost){
+    affectedCount,
+    records {
+      id 
+      name
+    }
+  }
+}
+`
+
 const definition = {
   deleteFromcabinsCollectionMutationDefinition,
   insertIntocabinsCollectionMutationDefinition,
+  updateIntocabinsCollectionMutationDefinition
 };
 
 export default definition;
