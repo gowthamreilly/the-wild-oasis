@@ -1,0 +1,56 @@
+name: End to end tests
+
+on:
+  pull_request:
+    branches: "main"
+  workflow_dispatch:
+    inputs:
+      playwright-env:
+        description: Playwright environment
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+          - development
+          - moon
+          - qa
+      test-match:
+        description: Grep match
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        app-name: ["guest", "hotel"]
+    name: Testing ${{matrix.app-name}} application (${{inputs.playwright-env}})
+    runs-on: ubuntu-latest
+    env:
+      PLAYWRIGHT_ENV: ${{inputs.playwright-env}}
+      SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+      SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+      NEXTAUTH_URL: ${{secrets.NEXTAUTH_URL}}
+      NEXTAUTH_SECRET: ${{secrets.NEXTAUTH_SECRET}}
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@v4
+      - name: Install nodejs
+        uses: actions/setup-node@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Install browsers
+        run: npx playwright install --with-deps
+      - name: Execute all tests
+        if: ${{!inputs.test-match}}
+        working-directory: apps/${{matrix.app-name}}
+        run: npx playwright test
+      - name: Upload artifcats
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          path: apps/${{matrix.app-name}}/playwright-report
+          name: playwright-report-${{matrix.app-name}}
+          retention-days: 1
