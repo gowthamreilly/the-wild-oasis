@@ -73,8 +73,7 @@ jobs:
       - name: TestRail CLI upload results
         if: always()
         run: |
-          pip install trcli
-          trcli -y \
+          trcli -n \
             -h ${{secrets.TESTRAIL_HOST}} \
             --project "${{secrets.TESTRAIL_PROJECT_NAME}}" \
             -u ${{secrets.TESTRAIL_USERNAME}} \
