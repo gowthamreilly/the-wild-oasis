@@ -40,8 +40,17 @@ const createBooking = async (booking: CreateBookingPayload) => {
   );
 };
 
+const getAllBookings = async () => {
+  return graphqlRequest(graphqlDefinition.getAllBookingsQueryDefinition, {
+    variables: {
+      first: 10,
+    },
+  });
+};
+
 export const graphqlApiClient = {
   deleteCabinById,
   createCabin,
   createBooking,
+  getAllBookings,
 };

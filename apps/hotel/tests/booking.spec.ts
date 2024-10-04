@@ -4,7 +4,7 @@ import { graphqlApiClient } from "./services/graphqlApiClient";
 const inputBookingPayload = {
   startDate: "2024-01-05T14:00:00Z",
   endDate: "2024-01-10T14:00:00Z",
-  cabinId: 4,
+  cabinId: 812,
   guestId: 2,
   numNights: 5,
   numGuests: 2,
@@ -20,4 +20,10 @@ test("Creating a booking from GraphQL API", async ({ page }) => {
   const res = await graphqlApiClient.createBooking(inputBookingPayload);
   const data = await res.json();
   console.log("Create booking ", data);
+});
+
+test("Getting all bookings from GraphQL API", async ({ page }) => {
+  const res = await graphqlApiClient.getAllBookings();
+  const data = await res.json();
+  console.log("Getting all Bookings", data.data.bookingsCollection.edges);
 });

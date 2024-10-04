@@ -44,10 +44,36 @@ mutation insertIntobookingsCollection($bookings:[bookingsInsertInput!]!){
 }
 `;
 
+const getAllBookingsQueryDefinition = `
+query bookingCollection($first:Int){
+  bookingsCollection(first:$first){
+    edges{
+      node{
+        id
+        startDate
+        endDate
+        numNights
+        numGuests
+        cabinPrice
+        extrasPrice
+        totalPrice
+        status
+        hasBreakfast
+        isPaid
+        observations
+        cabinId
+        guestId
+      }
+    }
+  }
+}
+`;
+
 const definition = {
   deleteFromcabinsCollectionMutationDefinition,
   insertIntocabinsCollectionMutationDefinition,
   insertIntoBookingsCollectionMutationDefinition,
+  getAllBookingsQueryDefinition,
 };
 
 export default definition;
