@@ -28,7 +28,27 @@ const createCabin = async (cabin: CreateCabinPayload) => {
   );
 };
 
+const updateCabinById = async (cabinId: string, updateData: any) => {
+  return graphqlRequest(
+    graphqlDefinition.editIntocabinsCollectionMutationDefination,
+    {
+      variables: {
+        input: {
+          updateData,
+        },
+        id: {
+          id: {
+            eq: cabinId,
+          },
+        },
+        num: 1,
+      },
+    }
+  );
+};
+
 export const graphqlApiClient = {
   deleteCabinById,
   createCabin,
+  updateCabinById,
 };

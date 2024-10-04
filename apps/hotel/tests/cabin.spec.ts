@@ -1,11 +1,13 @@
 import { test, expect } from "./config";
 import { CabinPage } from "./pages/cabin.page";
 import { generateUniqueCabinName } from "./utils";
+import path from "path";
 
 const CUSTOMER_APP_URL = "http://localhost:3000/";
 const CUSTOMER_CABINS_URL = `${CUSTOMER_APP_URL}cabins`;
 const SAMPLE_IMAGE_LINK =
   "https://umxjivfxuijjbopalczq.supabase.co/storage/v1/object/public/cabin-images/0.8074113787073192-wallpaperflare.com_wallpaper.jpg";
+const UPADTED_IMAGE_LINK = path.resolve("tests/images/image-5.jpg");
 
 let cabinId = undefined;
 
@@ -59,9 +61,7 @@ test.describe("CRUD Cabins", () => {
       await expect(cabinPage.cabinDescriptionInputLocator).toBeVisible();
       await expect(cabinPage.cabinImageInputLocator).toBeVisible();
 
-      const cabinName = await cabinPage.fillCabinForm({
-        name: "cabon name",
-      });
+      const cabinName = await cabinPage.fillCabinForm();
 
       await expect(cabinPage.cabinNameInputLocator).toHaveValue(cabinName);
       await expect(cabinPage.cabinMaximumCapacityInputLocator).toHaveValue("4");
@@ -142,6 +142,83 @@ test.describe("CRUD Cabins", () => {
       await expect(newlyCreatedCabinNameLocator).toBeVisible();
     }
   );
+
+  test("Edit Cabin", async ({ page, graphqlApiClient }) => {
+    const cabinName = generateUniqueCabinName();
+
+    const res = await graphqlApiClient.createCabin({
+      name: cabinName,
+      maxCapacity: 12,
+      regularPrice: 1600,
+      discount: 12,
+      description: "Sample Cabin",
+      image: SAMPLE_IMAGE_LINK,
+    });
+
+    expect(res.status()).toBe(200);
+
+    const data = await res.json();
+
+    cabinId = data?.data?.insertIntocabinsCollection?.records?.[0]?.id;
+
+    console.log("cabinId", cabinId);
+
+    await page.goto("/");
+
+    const cabinsNavMenuItemLink = page.getByRole("link", { name: "Cabins" });
+
+    await expect(cabinsNavMenuItemLink).toBeVisible();
+
+    await cabinsNavMenuItemLink.click();
+
+    const cabinsPageTitle = page.getByRole("heading", { name: "All cabins" });
+
+    await expect(cabinsPageTitle).toBeVisible();
+
+    const cabinRowLocator = page.getByRole("row", { name: cabinName });
+
+    await expect(cabinRowLocator).toBeVisible();
+
+    const moreActionsButtonLocator = cabinRowLocator.locator("button");
+
+    await expect(moreActionsButtonLocator).toBeVisible();
+
+    await moreActionsButtonLocator.click();
+
+    const editCabinButtonLocator = page.getByRole("button", {
+      name: "Edit",
+    });
+
+    await expect(editCabinButtonLocator).toBeVisible();
+
+    await editCabinButtonLocator.click();
+
+    const resBody = await res.json();
+
+    const response = await graphqlApiClient.updateCabinById(resBody.id, {
+      name: cabinName,
+      maxCapacity: 10,
+      regularPrice: 2000,
+      discount: 10,
+      description: "Changed Cabin Description",
+      image: UPADTED_IMAGE_LINK,
+    });
+
+    expect(response.status()).toBe(200);
+
+    await page
+      .getByRole("button")
+      .filter({
+        hasText: "Edit cabin",
+      })
+      .click();
+
+    const editCabinSuccessfully = page
+      .getByRole("status")
+      .filter({ hasText: "Cabin successfully edited" });
+
+    await expect(editCabinSuccessfully).toBeVisible();
+  });
 
   test("delete a  @regression @cabin-feature", async ({
     page,

@@ -21,7 +21,7 @@ type Options = {
   headers?: Record<string, string>;
 };
 
-export const graphqlRequest = async (definition: string, options?: Options) => {
+export const graphqlRequest = async (definition: string, options?: Options, p0?: { id: any; }) => {
   const { variables = {}, headers = {} } = options || {};
 
   const requiredHeaders = {
