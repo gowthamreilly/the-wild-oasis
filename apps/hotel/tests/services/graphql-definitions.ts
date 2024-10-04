@@ -18,9 +18,36 @@ mutation insertIntocabinsCollection($cabins: [cabinsInsertInput!]!) {
 }
 `;
 
+const insertIntoBookingsCollectionMutationDefinition = `
+mutation insertIntobookingsCollection($bookings:[bookingsInsertInput!]!){
+  insertIntobookingsCollection(objects:$bookings){
+    affectedCount
+    records{
+      nodeId
+      id
+      created_at
+      startDate
+      endDate
+      numNights
+      numGuests
+      cabinPrice
+      extrasPrice
+      totalPrice
+      status
+      hasBreakfast
+      isPaid
+      observations
+      cabinId
+      guestId
+    }
+  }
+}
+`;
+
 const definition = {
   deleteFromcabinsCollectionMutationDefinition,
   insertIntocabinsCollectionMutationDefinition,
+  insertIntoBookingsCollectionMutationDefinition,
 };
 
 export default definition;
