@@ -1,0 +1,25 @@
+<testsuites id="" name="" tests="2" failures="0" skipped="0" errors="0" time="2.409022999999999">
+<testsuite name="auth.setup.ts" timestamp="2024-10-04T14:47:05.246Z" hostname="setup" tests="1" failures="0" skipped="0" time="0.896" errors="0">
+<testcase name="login" classname="auth.setup.ts" time="0.896">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../test-results/auth.setup.ts-login-setup/trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="cabin.spec.ts" timestamp="2024-10-04T14:47:05.246Z" hostname="chromium" tests="1" failures="0" skipped="0" time="0.74" errors="0">
+<testcase name="CRUD Cabins › Edit cabin by GraphQL API" classname="cabin.spec.ts" time="0.74">
+<system-out>
+<![CDATA[Test: Edit cabin by GraphQL API is going to start
+Cabin Edited =>>> {
+  data: { updatecabinsCollection: { records: [36m[Array][39m, affectedCount: [33m1[39m } }
+}
+Test: Edit cabin by GraphQL API is going to end
+
+[[ATTACHMENT|../test-results/cabin-CRUD-Cabins-Edit-cabin-by-GraphQL-API-chromium/trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>
