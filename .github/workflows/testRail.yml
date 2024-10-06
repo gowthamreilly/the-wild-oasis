@@ -3,7 +3,7 @@ name: TestRail integration
 on:
   workflow_dispatch:
     inputs:
-      playwright-env:
+      playwright_env:
         description: Playwright environment
         required: true
         type: choice
@@ -13,21 +13,21 @@ on:
           - development
           - moon
           - qa
-      run-id:
+      run_id:
         description: Test run id
         required: true
         type: number
 
 jobs:
   test:
-    if: ${{ github.event.inputs.run-id != null }}
+    if: ${{ github.event.inputs.run_id != null }}
     strategy:
       matrix:
         app-name: ["guest", "hotel"]
-    name: Testing ${{matrix.app-name}} application (${{inputs.playwright-env}})
+    name: Testing ${{matrix.app-name}} application (${{inputs.playwright_env}})
     runs-on: ubuntu-latest
     env:
-      PLAYWRIGHT_ENV: ${{inputs.playwright-env}}
+      PLAYWRIGHT_ENV: ${{inputs.playwright_env}}
       SUPABASE_URL: ${{secrets.SUPABASE_URL}}
       SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
       NEXTAUTH_URL: ${{secrets.NEXTAUTH_URL}}
@@ -37,7 +37,7 @@ jobs:
         id: fetch-test-cases
         uses: fjogeleit/http-request-action@v1.14.1
         with:
-          url: ${{secrets.TESTRAIL_HOST}}index.php?/api/v2/get_tests/${{ github.event.inputs.run-id }}
+          url: ${{secrets.TESTRAIL_HOST}}index.php?/api/v2/get_tests/${{ github.event.inputs.run_id }}
           method: GET
           username: ${{secrets.TESTRAIL_USERNAME}}
           password: ${{secrets.TESTRAIL_KEY}}
@@ -80,7 +80,5 @@ jobs:
             -k ${{secrets.TESTRAIL_KEY}} \
             parse_junit \
             --case-matcher name \
-            --title "Automated Tests from GitHub workflow ${{inputs.playwright-env}}" \
-            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
             -f "apps/${{matrix.app-name}}/playwright-report/junit-report.xml" \
-            --run-id ${{inputs.run-id}}
+            --run-id ${{inputs.run_id}}
