@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./config";
 import { LoginPage } from "./pages/login.page";
 
 const LOGIN_URL = `/login`;

@@ -1,9 +1,40 @@
 import { CreateCabinPayload } from "../types";
-import { graphqlRequest } from "./request";
 import graphqlDefinition from "./graphql-definitions";
+import { APIRequestContext, APIResponse } from "@playwright/test";
 
-const deleteCabinById = async (cabinId: string) => {
+type Options = {
+  variables?: Record<string, any>;
+  headers?: Record<string, string>;
+};
+
+export const graphqlRequest = async (
+  request: APIRequestContext,
+  definition: string,
+  options?: Options
+) => {
+  const { variables = {}, headers = {} } = options || {};
+
+  const requiredHeaders = {
+    "Content-Type": "application/json",
+  };
+
+  const requestHeaders = {
+    ...requiredHeaders,
+    ...headers,
+  };
+
+  return request.post(`/graphql/v1`, {
+    data: JSON.stringify({
+      query: definition,
+      variables,
+    }),
+    headers: requestHeaders,
+  });
+};
+
+const deleteCabinById = async (request: APIRequestContext, cabinId: string) => {
   return graphqlRequest(
+    request,
     graphqlDefinition.deleteFromcabinsCollectionMutationDefinition,
     {
       variables: {
@@ -17,8 +48,12 @@ const deleteCabinById = async (cabinId: string) => {
   );
 };
 
-const createCabin = async (cabin: CreateCabinPayload) => {
+const createCabin = async (
+  request: APIRequestContext,
+  cabin: CreateCabinPayload
+) => {
   return graphqlRequest(
+    request,
     graphqlDefinition.insertIntocabinsCollectionMutationDefinition,
     {
       variables: {
@@ -28,7 +63,16 @@ const createCabin = async (cabin: CreateCabinPayload) => {
   );
 };
 
-export const graphqlApiClient = {
-  deleteCabinById,
-  createCabin,
+export type GraphQLApiClient = {
+  deleteCabinById: (cabinId: string) => Promise<void>;
+  createCabin: (cabin: CreateCabinPayload) => Promise<APIResponse>;
+};
+
+export const createGraphQLApiClient = (
+  request: APIRequestContext
+): GraphQLApiClient => {
+  return {
+    deleteCabinById: deleteCabinById.bind(null, request),
+    createCabin: createCabin.bind(null, request),
+  };
 };

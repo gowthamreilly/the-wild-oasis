@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "prod": "vite build && vite preview",
-    "test": "PLAYWRIGHT_ENV=development npx playwright test"
+    "test": "PLAYWRIGHT_ENV=development npx playwright test --ui"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.21.0",

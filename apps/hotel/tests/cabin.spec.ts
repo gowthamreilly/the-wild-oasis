@@ -1,10 +1,7 @@
 import { test, expect } from "./config";
 import { CabinPage } from "./pages/cabin.page";
 import { generateUniqueCabinName } from "./utils";
-import path from "path";
 
-const CUSTOMER_APP_URL = "http://localhost:3000/";
-const CUSTOMER_CABINS_URL = `${CUSTOMER_APP_URL}cabins`;
 const SAMPLE_IMAGE_LINK =
   "https://umxjivfxuijjbopalczq.supabase.co/storage/v1/object/public/cabin-images/0.8074113787073192-wallpaperflare.com_wallpaper.jpg";
 
@@ -71,7 +68,7 @@ test.describe("CRUD Cabins", () => {
       );
 
       const addNewCabinFormSubmitButtonLocator = page.getByRole("button", {
-        name: "Create new cabinnnnnnn",
+        name: "Create new cabin",
       });
 
       await expect(addNewCabinFormSubmitButtonLocator).toBeVisible();

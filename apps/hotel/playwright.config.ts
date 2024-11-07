@@ -11,22 +11,14 @@ const isDevelopment = PLAYWRIGHT_ENV === "development";
 
 export default defineConfig({
   testDir: "tests",
-
   projects: [
     {
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
-        storageState: "auth.json",
       },
-      dependencies: ["setup"],
-    },
-    {
-      name: "setup",
-      testMatch: "tests/auth.setup.ts",
     },
   ],
-
   reporter: [
     ["list"],
     ["html", { open: "never" }],
